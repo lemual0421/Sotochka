@@ -1,0 +1,74 @@
+{% load static %}
+{% block content %}
+<head>
+    <title>Предметы</title> 
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+</head>
+<div class="school-subjects">
+
+    <div class="school-header">
+        <h1 class="school-title">Мои предметы</h1>
+        <div class="school-header-line"></div>
+    </div>
+
+    <!-- Контейнер предметов -->
+    <div class="school-container">
+        {% if subjects %}
+        <div class="school-grid">
+            {% for subject in subjects %}
+            <div class="school-card">
+                <a href="{% url 'tasks:subject_detail' slug=subject.slug %}" class="school-card-link">
+                    <div class="school-card-top">
+                        <h2 class="school-card-title">{{ subject.name }}</h2>
+                        <div class="school-card-badge">
+                            <svg class="icon-book" viewBox="0 0 24 24">
+                                <path d="M18 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm0 18H6V4h2v8l2.5-1.5L13 12V4h5v16z"/>
+                            </svg>
+                            <span>{{ subject.task_count }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="school-progress">
+                        <div class="school-progress-bar" 
+                             style="--progress: {% widthratio subject.completed_tasks subject.task_count 100 %}%"></div>
+                        <span class="school-progress-text">
+                            Пройдено: {{ subject.completed_tasks }}/{{ subject.task_count }}
+                        </span>
+                    </div>
+                    
+                    <div class="school-card-bottom">
+                        <div class="school-date">
+                            <svg class="icon-date" viewBox="0 0 24 24">
+                                <path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 16H5V9h14v10zM5 7V5h14v2H5z"/>
+                            </svg>
+                            <span>{{ subject.exam_date|date:"d.m.Y" }}</span>
+                        </div>
+                        <div class="school-days {% if subject.days_until_exam < 7 %}school-days-warning{% endif %}">
+                            <svg class="icon-clock" viewBox="0 0 24 24">
+                                <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z"/>
+                            </svg>
+                            <span>{{ subject.days_until_exam }} дней</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="school-empty">
+            <div class="school-empty-icon">
+                <svg class="icon-empty" viewBox="0 0 24 24">
+                    <path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/>
+                </svg>
+            </div>
+            <h3>Пока нет предметов</h3>
+            <p>Добавьте первый предмет, чтобы начать обучение</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+{% endblock %}

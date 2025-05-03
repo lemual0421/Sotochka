@@ -1,0 +1,217 @@
+{% load static %}
+{% block content %}
+<head>
+    <title>{{ task.title }} | {{ subject.name }}</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+</head>
+
+<div class="subject-container">
+    <main class="school-main">
+        <!-- Шапка задания -->
+        <header class="subject-header">
+            <div class="subject-header-content">
+                <nav class="breadcrumb">
+                    <a href="{% url 'tasks:subject_list' %}" class="breadcrumb-item">Предметы</a>
+                    <span class="breadcrumb-divider">/</span>
+                    <span class="breadcrumb-item active">{{ subject.name }}</span>
+                </nav>
+                <h1 class="subject-title">{{ task.title }}</h1>
+                <div class="subject-meta">
+                    <div class="meta-item">
+                        <svg class="meta-icon" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                        </svg>
+                        {{ task.topic }}
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Основной контент -->
+        <section class="assignment-card">
+            <!-- Видео -->
+            {% if video_url %}
+            <div class="task-video">
+                <iframe src="{{ video_url }}" frameborder="0" allowfullscreen></iframe>
+            </div>
+            {% endif %}
+
+            <!-- Теория -->
+            <div class="section-title">
+                <svg class="title-icon" viewBox="0 0 24 24">
+                    <path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/>
+                </svg>
+                Теория
+            </div>
+            <div class="formatted-content">
+                {{ task.content|safe }}
+            </div>
+
+            <!-- PDF материалы -->
+            {% if pdf %}
+            <div class="task-pdf">
+                <a href="{{ pdf.url }}" target="_blank" class="btn">
+                    Материалы PDF
+                </a>
+            </div>
+            {% endif %}
+        </section>
+
+        <!-- Тестовые задания -->
+        <section class="assignment-card assignments-section">
+            <div class="section-title">
+                Тестовые задания
+            </div>
+
+            <div class="assignments-grid">
+                {% for question in questions %}
+                <div class="card">
+                    <div class="assignment-header">
+                        <span class="assignment-number">Задание {{ forloop.counter }}</span>
+                        <button class="quiz-hint" data-correct="{{ question.correct_answer|escapejs }}">
+                            <div class="progress-dot"></div>
+                            
+                        </button>
+                    </div>
+
+                    {% if question.image %}
+                    <div class="task-image">
+                        <img src="{{ question.image.url }}" alt="Иллюстрация к заданию">
+                    </div>
+                    {% endif %}
+
+                    <div class="assignment-title">
+                        {{ question.question_text }}
+                    </div>
+
+                    <div class="quiz-controls">
+                        {% if question.question_type == 'text' %}
+                        <input type="text" 
+                               class="form-control"
+                               placeholder="Введите ответ"
+                               data-type="text">
+                        {% elif question.question_type == 'number' %}
+                        <input type="number" 
+                               step="any"
+                               class="form-control"
+                               placeholder="Введите число"
+                               data-type="number">
+                        {% elif question.question_type == 'matrix' %}
+                        <input type="text" 
+                               class="form-control"
+                               placeholder="[[1,2],[3,4]]"
+                               data-type="matrix">
+                        {% endif %}
+                        
+                        <button class="btn btn-check">
+                            Проверить
+                        </button>
+                    </div>
+                    
+                    <div class="quiz-feedback"></div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Кнопка завершения -->
+        <div class="task-actions">
+            <form id="toggle-task-form" method="post" class="btn-new" action="{% url 'tasks:toggle_task_completion' task.id %}">
+                {% csrf_token %}
+                <button type="button" id="toggle-task-btn" class="btn {% if task.completed %}completed{% else %}active{% endif %}">
+                    {% if task.completed %}
+                        Отменить выполнение
+                    {% else %}
+                        Я выполнил задание
+                    {% endif %}
+                </button>
+            </form>
+        </div>
+    </main>
+</div>
+
+<!-- JavaScript (оставлен без изменений) -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleTaskBtn = document.getElementById('toggle-task-btn');
+        const toggleTaskForm = document.getElementById('toggle-task-form');
+    
+        if (toggleTaskBtn) {
+            toggleTaskBtn.addEventListener('click', function() {
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                const url = toggleTaskForm.action;
+    
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify({})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        if (data.completed) {
+                            toggleTaskBtn.textContent = 'Отменить выполненное задание';
+                            toggleTaskBtn.classList.remove('btn-primary');
+                            toggleTaskBtn.classList.add('btn-success');
+                        } else {
+                            toggleTaskBtn.textContent = 'Я выполнил задание';
+                            toggleTaskBtn.classList.remove('btn-success');
+                            toggleTaskBtn.classList.add('btn-primary');
+                        }
+                    } else {
+                        alert('Не удалось переключить состояние задачи. Попробуйте снова.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                    alert('Произошла ошибка. Попробуйте снова.');
+                });
+            });
+        }
+    });
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Проверка ответов
+    document.querySelectorAll('.btn-check').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const quizCard = this.closest('.assignment-card');
+            const input = quizCard.querySelector('.form-control');
+            const feedback = quizCard.querySelector('.quiz-feedback');
+            const correctAnswer = quizCard.querySelector('.quiz-hint').dataset.correct;
+
+            // Логика проверки ответа
+            let isCorrect = false;
+            const userAnswer = input.value.trim();
+
+            if (correctAnswer === userAnswer) {
+                isCorrect = true;
+            } else if (input.dataset.type === 'matrix') {
+                try {
+                    const userMatrix = JSON.parse(userAnswer);
+                    const correctMatrix = JSON.parse(correctAnswer);
+                    isCorrect = JSON.stringify(userMatrix) === JSON.stringify(correctMatrix);
+                } catch (e) {
+                    isCorrect = false;
+                }
+            }
+
+            feedback.textContent = isCorrect ? '✓ Верно!' : '✕ Неверно';
+            feedback.style.color = isCorrect ? 'var(--primary-color)' : '#ef4444';
+            input.style.borderColor = isCorrect ? 'var(--primary-color)' : '#ef4444';
+        });
+    });
+
+    // Показать правильный ответ
+    document.querySelectorAll('.quiz-hint').forEach(btn => {
+        btn.addEventListener('click', function() {
+            alert(`Правильный ответ: ${this.dataset.correct}`);
+        });
+    });
+});
+</script>
+{% endblock %}
