@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
+from django.contrib.auth.models import AbstractUser
 
 class Subject(models.Model):
     name = models.CharField(max_length=200)
@@ -11,6 +12,12 @@ class Subject(models.Model):
         if not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
+
+class StudyMaterial(models.Model):
+    name = models.CharField(max_length=200)
+    description = models.TextField()
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, null=True, blank=True)
+    pdf = models.FileField(upload_to='files/', null=True, blank=True)
 
 class Task(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
@@ -38,5 +45,9 @@ class Question(models.Model):
     question_text= models.TextField()
     correct_answer = models.TextField()
     image = models.ImageField(upload_to='images/', null=True, blank=True)
-def mathjax(request):
-    return {'mathjax': True}
+
+class CustomUser(AbstractUser):
+    phone = models.CharField(max_length=20, blank=True)
+    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+    
+    # Добавьте другие поля по необходимости

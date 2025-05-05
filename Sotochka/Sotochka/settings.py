@@ -15,7 +15,7 @@ SECRET_KEY = "django-insecure-(b7db21^*dd1lemqv1!xj6hru^pi*hopepm6fi)3zy61=0a#03
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+#ALLOWED_HOSTS = ['tinkoff.fun', '83.219.250.65']
 
 # Application definition
 
@@ -116,3 +116,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+AUTH_USER_MODEL = 'tasks.CustomUser'

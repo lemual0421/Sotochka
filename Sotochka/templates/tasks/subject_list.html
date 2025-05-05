@@ -66,9 +66,57 @@
         </div>
         {% endif %}
     </div>
+
+    <!-- Контейнер учебных материалов -->
+    <div class="school-header" style="margin-top: 40px;">
+        <h1 class="school-title">Учебные материалы</h1>
+        <div class="school-header-line"></div>
+    </div>
+
+    <div class="school-container">
+        {% if study_materials %}
+        <div class="school-grid">
+            {% for material in study_materials %}
+            <div class="school-card">
+                <a href="{{ material.pdf.url }}" class="school-card-link" target="_blank">
+                    <div class="school-card-top">
+                        <h2 class="school-card-title">{{ material.name }}</h2>
+                        
+                    </div>
+                    <div class="school-description">
+                        <p>{{ material.description|truncatechars:100 }}</p>
+                    </div>
+                    <div class="school-card-bottom">
+                        <div class="school-file-type" style="color: var(--primary-color);">
+        
+                            <p>File</p>
+                            
+                        </div>
+                        <div>
+                            {% if material.subject %}
+                            <div class="school-days">
+                                <span>{{ material.subject.name }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="school-empty">
+            <div class="school-empty-icon">
+                <svg class="icon-empty" viewBox="0 0 24 24">
+                    <path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/>
+                </svg>
+            </div>
+            <h3>Пока нет учебных материалов</h3>
+            <p>Добавьте первый материал, чтобы начать обучение</p>
+        </div>
+        {% endif %}
+    </div>
 </div>
-
-
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 {% endblock %}

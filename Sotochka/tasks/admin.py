@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Subject, Task, Question
+from .models import Subject, Task, Question, StudyMaterial
 
 class QuestionInline(admin.TabularInline):
     model = Question
@@ -8,6 +8,12 @@ class QuestionInline(admin.TabularInline):
     fields = ('question_text', 'question_type', 'correct_answer')
     show_change_link = True
     classes = ('collapse',)  # Добавляем возможность сворачивания
+
+@admin.register(StudyMaterial)
+class StudyMaterialAdmin(admin.ModelAdmin):
+    list_display = ('name', 'subject', 'pdf')  # Поля, которые будут отображаться в списке
+    list_filter = ('subject',)  # Фильтры справа
+    search_fields = ('name', 'description')  # Поля, по которым можно будет искать
 
 class TaskInline(admin.TabularInline):
     model = Task

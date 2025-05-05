@@ -3,7 +3,7 @@ from django.utils import timezone
 from datetime import timedelta
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
-from .models import Subject, Task, Question
+from .models import Subject, Task, Question, StudyMaterial
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
@@ -15,11 +15,12 @@ class SubjectListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         today = timezone.now().date()
-        
         for subject in context['subjects']:
             subject.days_until_exam = (subject.exam_date - today).days
             subject.task_count = Task.objects.filter(subject=subject).count()
             subject.completed_tasks = Task.objects.filter(subject=subject, completed=True).count() 
+
+        context['study_materials'] = StudyMaterial.objects.all()
         return context
 
 class SubjectDetailView(DetailView):
