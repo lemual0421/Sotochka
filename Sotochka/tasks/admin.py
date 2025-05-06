@@ -5,9 +5,9 @@ from .models import Subject, Task, Question, StudyMaterial
 class QuestionInline(admin.TabularInline):
     model = Question
     extra = 1
-    fields = ('question_text', 'question_type', 'correct_answer')
+    fields = ('question_text', 'question_type', 'correct_answer', 'image')
     show_change_link = True
-    classes = ('collapse',)  # Добавляем возможность сворачивания
+    classes = ('collapse',)  # Добавляем возможность сворачивать инлайн
 
 @admin.register(StudyMaterial)
 class StudyMaterialAdmin(admin.ModelAdmin):
@@ -106,7 +106,7 @@ class TaskAdmin(admin.ModelAdmin):
 
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
-    list_display = ('short_question_text', 'task_with_subject', 'question_type', 'correct_answer_preview')
+    list_display = ('short_question_text', 'task_with_subject', 'question_type', 'correct_answer_preview', 'image')
     list_filter = ('question_type', 'task__subject')
     search_fields = ('question_text', 'correct_answer', 'task__title')
     ordering = ('task__subject', 'task', 'id')
@@ -115,10 +115,10 @@ class QuestionAdmin(admin.ModelAdmin):
     # Группировка полей
     fieldsets = (
         (None, {
-            'fields': ('task', 'question_type')
+            'fields': ('task', 'question_type', )
         }),
         ('Вопрос и ответ', {
-            'fields': ('question_text', 'correct_answer')
+            'fields': ('image','question_text', 'correct_answer')
         }),
     )
     

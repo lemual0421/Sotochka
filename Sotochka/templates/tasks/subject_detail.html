@@ -22,10 +22,12 @@
                     </svg>
                     <span>До экзамена: {{ subject.days_until }} дней</span>
                 </div>
+                <div class="meta-item"><a href="{% url 'tasks:subject_list' %}" class="btn btn-small">К списку предметов</a></div>
             </div>
         </div>
+        
         <div class="progress-circle">
-            <svg viewBox="0 0 36 36">
+            <svg viewBox="0 0 36 36" width="120" height="120" preserveAspectRatio="xMidYMid meet">
                 <path class="circle-bg"
                     d="M18 2.0845
                     a 15.9155 15.9155 0 0 1 0 31.831
@@ -98,4 +100,3 @@
     </section>
 </div>
 {% endblock %}
-

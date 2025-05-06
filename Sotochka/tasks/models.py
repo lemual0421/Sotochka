@@ -1,6 +1,5 @@
 from django.db import models
 from django.utils.text import slugify
-from django.contrib.auth.models import AbstractUser
 
 class Subject(models.Model):
     name = models.CharField(max_length=200)
@@ -46,8 +45,5 @@ class Question(models.Model):
     correct_answer = models.TextField()
     image = models.ImageField(upload_to='images/', null=True, blank=True)
 
-class CustomUser(AbstractUser):
-    phone = models.CharField(max_length=20, blank=True)
-    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
     
     # Добавьте другие поля по необходимости

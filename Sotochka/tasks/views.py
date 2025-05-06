@@ -3,7 +3,7 @@ from django.utils import timezone
 from datetime import timedelta
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
-from .models import Subject, Task, Question, StudyMaterial
+from .models import Subject, Task, Question,StudyMaterial
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
@@ -78,6 +78,7 @@ class TaskDetailView(DetailView):
             'today': timezone.now().date(),
             'image': task.image,
             'pdf': task.pdf,
+            'slug' : task.subject.slug,
             'video_url': task.video_url,
         })
         return context
