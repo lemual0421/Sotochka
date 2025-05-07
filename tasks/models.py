@@ -38,12 +38,13 @@ class Question(models.Model):
         ('text', 'Текстовый ответ'),
         ('number', 'Числовой ответ'),
         ('matrix', 'Матрица'),
+        ('image', 'Изображение')
     ]
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     question_type = models.CharField(max_length=10, choices=QUESTION_TYPES)
     question_text= models.TextField()
     correct_answer = models.TextField()
     image = models.ImageField(upload_to='images/', null=True, blank=True)
-
+    answer_image = models.ImageField(upload_to='answer_images/', null=True, blank=True)
     
     # Добавьте другие поля по необходимости

@@ -5,7 +5,7 @@ from .models import Subject, Task, Question, StudyMaterial
 class QuestionInline(admin.TabularInline):
     model = Question
     extra = 1
-    fields = ('question_text', 'question_type', 'correct_answer', 'image')
+    fields = ('question_text', 'question_type', 'correct_answer', 'image', 'answer_image')
     show_change_link = True
     classes = ('collapse',)  # Добавляем возможность сворачивать инлайн
 
@@ -118,7 +118,7 @@ class QuestionAdmin(admin.ModelAdmin):
             'fields': ('task', 'question_type', )
         }),
         ('Вопрос и ответ', {
-            'fields': ('image','question_text', 'correct_answer')
+            'fields': ('image','question_text', 'correct_answer', 'answer_image'),
         }),
     )
     

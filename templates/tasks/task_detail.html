@@ -3,6 +3,9 @@
 <head>
     <title>{{ task.title }} | {{ subject.name }}</title>
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
 </head>
 
 <div class="subject-container">
@@ -24,12 +27,18 @@
                         {{ task.topic }}
                     </div>
                     <div class="meta-item">
-                        <a href="{% url 'tasks:subject_detail' slug=subject.slug %}" class="btn btn-small">К списку задач</a>
+                        <a src="/subject/{{slug}}" class="btn btn-small"></a>
+                            К списку задач
+                        </a>
                     </div>
                 </div>
             </div>
         </header>
-
+        <div class="school-header">
+            <div class="school-title">
+                Теоритическая часть
+            </div>
+        </div>
         <!-- Основной контент -->
         <section class="assignment-card">
             <!-- Видео -->
@@ -71,29 +80,23 @@
         </section>
         <div>
         <!-- Тестовые задания -->
-            <div class="section-title">
-                Тестовые задания
+            <div class="school-header">
+                <div class="school-title">
+                    Тестовые задания
+                </div>
             </div>
                 {% for question in questions %}
                 <div class="assignment-card">
                     <div class="assignment-header">
                         <span class="assignment-number">Задание {{ forloop.counter }}</span>
-                        <button class="quiz-hint" data-correct="{{ question.correct_answer|escapejs }}">
-                            <div class="progress-dot"></div>
-                            
-                        </button>
+                        {% if question.question_type == 'image' and question.image %}
+                        <button class="btn btn-check" onclick="window.open('{{ question.answer_image.url }}', '_blank')">Показать решение</button>
+                        {% else %}
+                        <button class="btn btn-check">Проверить</button>
+                        {% endif %}
                     </div>
 
-                    {% if question.image %}
-                    <div class="task-image">
-                        <img src="{{ question.image.url }}" alt="Иллюстрация к заданию">
-                    </div>
-                    {% endif %}
-
-                    <div class="assignment-title">
-                        {{ question.question_text }}
-                    </div>
-
+                    {% if question.question_type != 'image' %}
                     <div class="quiz-controls">
                         {% if question.question_type == 'text' %}
                         <input type="text" 
@@ -112,12 +115,18 @@
                                placeholder="[[1,2],[3,4]]"
                                data-type="matrix">
                         {% endif %}
-                        
-                        <button class="btn btn-check">
-                            Проверить
-                        </button>
-                    </div>    
-                <div class="quiz-feedback"></div>
+                    </div>
+                    {% endif %}
+
+                    {% if question.image %}
+                    <div class="task-image">
+                        <img src="{{ question.image.url }}" alt="Иллюстрация к заданию">
+                    </div>
+                    {% endif %}
+
+                    <div class="assignment-title">
+                        {{ question.question_text }}
+                    </div>
                 </div>
                 {% endfor %}
         <!-- Кнопка завершения -->

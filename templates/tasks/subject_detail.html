@@ -3,6 +3,9 @@
 <head>
     <title>Предметы</title> 
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
 </head>
 <div class="subject-container">
     <!-- Заголовок предмета -->
@@ -25,7 +28,6 @@
                 <div class="meta-item"><a href="{% url 'tasks:subject_list' %}" class="btn btn-small">К списку предметов</a></div>
             </div>
         </div>
-        
         <div class="progress-circle">
             <svg viewBox="0 0 36 36" width="120" height="120" preserveAspectRatio="xMidYMid meet">
                 <path class="circle-bg"
