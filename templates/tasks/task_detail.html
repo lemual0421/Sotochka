@@ -87,16 +87,19 @@
             </div>
                 {% for question in questions %}
                 <div class="assignment-card">
+                    <!-- Заголовок задания -->
                     <div class="assignment-header">
                         <span class="assignment-number">Задание {{ forloop.counter }}</span>
-                        {% if question.question_type == 'image' and question.image %}
-                        <button class="btn btn-check" onclick="window.open('{{ question.answer_image.url }}', '_blank')">Показать решение</button>
-                        {% else %}
-                        <button class="btn btn-check">Проверить</button>
-                        {% endif %}
                     </div>
 
-                    {% if question.question_type != 'image' %}
+                    <!-- Картинка задания (если есть) -->
+                    {% if question.image %}
+                    <div class="task-image">
+                        <img src="{{ question.image.url }}" alt="Иллюстрация к заданию">
+                    </div>
+                    {% endif %}
+
+                    <!-- Поле ввода ответа или кнопка для типа image -->
                     <div class="quiz-controls">
                         {% if question.question_type == 'text' %}
                         <input type="text" 
@@ -114,19 +117,16 @@
                                class="form-control"
                                placeholder="[[1,2],[3,4]]"
                                data-type="matrix">
+                        {% elif question.question_type == 'image' %}
+                        <button class="btn btn-check" onclick="window.open('{{ question.answer_image.url }}', '_blank')">Показать решение</button>
                         {% endif %}
                     </div>
-                    {% endif %}
 
-                    {% if question.image %}
-                    <div class="task-image">
-                        <img src="{{ question.image.url }}" alt="Иллюстрация к заданию">
-                    </div>
+                    <!-- Кнопка проверки ответа (кроме типа image) -->
+                    {% if question.question_type != 'image' %}
+                    <div class="quiz-feedback"></div>
+                    <button class="btn btn-check" data-correct="{{ question.correct_answer }}">Проверить</button>
                     {% endif %}
-
-                    <div class="assignment-title">
-                        {{ question.question_text }}
-                    </div>
                 </div>
                 {% endfor %}
         <!-- Кнопка завершения -->
@@ -198,12 +198,12 @@
                 const questionCard = this.closest('.assignment-card');
                 const input = questionCard.querySelector('.form-control');
                 const feedback = questionCard.querySelector('.quiz-feedback');
-                const correctAnswer = questionCard.querySelector('.quiz-hint').dataset.correct;
-                const answerType = input.dataset.type;
+                const correctAnswer = this.dataset.correct;
+                const answerType = input ? input.dataset.type : null;
     
                 // Логика проверки ответа с учетом типа вопроса
                 let isCorrect = false;
-                const userAnswer = input.value.trim().replace(/\s+/g, ''); // Удаляем все пробелы
+                const userAnswer = input ? input.value.trim().replace(/\s+/g, '') : null; // Удаляем все пробелы
     
                 try {
                     switch(answerType) {
@@ -230,9 +230,13 @@
                 }
     
                 // Отображение результата
-                feedback.textContent = isCorrect ? '✓ Верно!' : `✕ Неверно (Правильно: ${correctAnswer})`;
-                feedback.style.color = isCorrect ? 'var(--primary-color)' : '#ef4444';
-                input.style.borderColor = isCorrect ? 'var(--primary-color)' : '#ef4444';
+                if (feedback) {
+                    feedback.textContent = isCorrect ? '✓ Верно!' : `✕ Неверно (Правильно: ${correctAnswer})`;
+                    feedback.style.color = isCorrect ? 'var(--primary-color)' : '#ef4444';
+                }
+                if (input) {
+                    input.style.borderColor = isCorrect ? 'var(--primary-color)' : '#ef4444';
+                }
             });
         });
     
