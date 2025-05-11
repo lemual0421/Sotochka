@@ -1,0 +1,16 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Профиль</title>
+</head>
+<body>
+    <h1>Профиль пользователя: {{ profile.user.username }}</h1>
+    {% if profile.avatar %}
+        <img src="{{ profile.avatar.url }}" alt="Аватарка" style="width: 150px; height: 150px;">
+    {% endif %}
+    <p>Email: {{ profile.user.email }}</p>
+    <p>Bio: {{ profile.bio }}</p>
+    <a href="{% url 'accounts:logout' %}">Выйти</a>
+</body>
+</html>
