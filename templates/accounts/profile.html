@@ -1,16 +1,184 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-    <title>Профиль</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль {{ profile.user.username }}</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <style>
+        /* Дополнительные стили для профиля */
+        .profile-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .avatar-wrapper {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary-color);
+            box-shadow: 0 8px 24px var(--shadow-color);
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 4px 6px var(--shadow-color);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--icon-color);
+            font-size: 0.9rem;
+        }
+
+        .profile-details {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 2rem;
+        }
+
+        .bio-section {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px var(--shadow-color);
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: var(--bg2-color);
+            border-radius: 12px;
+        }
+
+        .detail-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 1rem;
+            fill: var(--icon-color);
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .profile-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .avatar-wrapper {
+                width: 120px;
+                height: 120px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Профиль пользователя: {{ profile.user.username }}</h1>
-    {% if profile.avatar %}
-        <img src="{{ profile.avatar.url }}" alt="Аватарка" style="width: 150px; height: 150px;">
-    {% endif %}
-    <p>Email: {{ profile.user.email }}</p>
-    <p>Bio: {{ profile.bio }}</p>
-    <a href="{% url 'accounts:logout' %}">Выйти</a>
+    <div class="profile-container">
+        <header class="profile-header">
+            <div class="avatar-wrapper">
+                {% if profile.avatar %}
+                    <img src="{{ profile.avatar.url }}" alt="Аватар" class="avatar">
+                {% else %}
+                    <div class="avatar" style="background: var(--bg2-color);"></div>
+                {% endif %}
+            </div>
+            <h1>{{ profile.user.username }}</h1>
+        </header>
+
+        <div class="profile-stats">
+            <div class="stat-card">
+                <div class="stat-value">1.5k</div>
+                <div class="stat-label">Пройдено уроков</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">87%</div>
+                <div class="stat-label">Успеваемость</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">23</div>
+                <div class="stat-label">Дней подряд</div>
+            </div>
+        </div>
+
+        <div class="profile-details">
+            <div class="bio-section">
+                <h2>Обо мне</h2>
+                <p class="bio-text">{{ profile.bio|default:"Пока ничего не рассказал о себе" }}</p>
+                
+                <div class="detail-item">
+                    <svg class="detail-icon" viewBox="0 0 24 24">
+                        <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"/>
+                    </svg>
+                    <span>{{ profile.user.email }}</span>
+                </div>
+            </div>
+
+            <div class="account-actions">
+                <div class="detail-item">
+                    <svg class="detail-icon" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                    </svg>
+                    <span>Участник с {{ profile.user.date_joined|date:"d.m.Y" }}</span>
+                </div>
+                <a href="{% url 'accounts:logout' %}" class="logout-btn detail-item" style="width: fit-content;">
+                    Выйти
+                </a>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

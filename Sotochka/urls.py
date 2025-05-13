@@ -5,6 +5,6 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('index.urls')),
+    path('', include('index.urls')),
     path('', include('tasks.urls')),# Главная страница теперь ведёт на tasks.urls
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
